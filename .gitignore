@@ -1,0 +1,10 @@
+.deps/
+/Makefile
+/config.h
+/config.log
+/config.status
+/*.lsm
+/*.spec
+/stamp-h1
+/lsuio
+*.o
