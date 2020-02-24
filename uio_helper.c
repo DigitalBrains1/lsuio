@@ -3,6 +3,7 @@
    UIO helper functions.
 
    Copyright (C) 2007 Hans J. Koch
+   Copyright (C) 2020 QBayLogic B.V.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License version 2 as
@@ -136,6 +137,68 @@ int dev_attr_filter(char *filename)
 	return 0;
 }
 
+struct uio_dev_attr_t *uio_get_uevent_attributes(char *filename,
+		struct uio_dev_attr_t **link)
+{
+	const char prefix[] = "uevent/";
+	const size_t prefix_len = strlen(prefix);
+	char linebuf[2*UIO_MAX_NAME_SIZE - prefix_len + 3];
+	/* ^ Enough room for VAR=VALUE\n where VAR will be prefixed. Note that
+	 *   if UIO_MAX_NAME_SIZE ever proves insufficient,
+	 *   include/linux/kobject.h in the kernel source defines
+	 *   UEVENT_BUFFER_SIZE (2048) as holding the entire uevent file, so
+	 *   this is an upper bound on the size of any variable.
+	 */
+	char *s1, *s2;
+	struct uio_dev_attr_t *attr = NULL;
+	FILE* file;
+
+	file = fopen(filename, "r");
+	if (!file)
+		return NULL;
+	s1 = fgets(linebuf, sizeof(linebuf), file);
+
+	while (s1) {
+		attr = malloc(sizeof(*attr));
+		if (!attr) {
+			fclose(file);
+			return NULL;
+		}
+		s2 = strsep(&s1, "=\n");
+		strcpy(attr->name, prefix);
+		strncpy(attr->name + prefix_len, s2,
+				sizeof(attr->name) - prefix_len);
+		attr->name[sizeof(attr->name)-1] = '\0';
+		if (s1) {
+			s2 = strsep(&s1, "\n");
+			strncpy(attr->value, s2, sizeof(attr->value));
+		} else {
+			attr->value[0] = '\0';
+		}
+		*link = attr;
+		attr->next = NULL;
+		link = &attr->next;
+		s1 = fgets(linebuf, sizeof(linebuf), file);
+	}
+
+	if (!attr) {
+		/* uevent file was empty */
+		attr = malloc(sizeof(*attr));
+		if (!attr) {
+			fclose(file);
+			return NULL;
+		}
+		strcpy(attr->name, "uevent");
+		attr->value[0] = '\0';
+		*link = attr;
+		attr->next = NULL;
+		link = &attr->next;
+	}
+
+	fclose(file);
+	return attr;
+}
+
 int uio_get_device_attributes(struct uio_info_t* info)
 {
 	struct dirent **namelist;
@@ -154,6 +217,20 @@ int uio_get_device_attributes(struct uio_info_t* info)
 			info->uio_num, namelist[n]->d_name);
 		if (!dev_attr_filter(fullname))
 			continue;
+		if (!strcmp(namelist[n]->d_name, "uevent")) {
+			struct uio_dev_attr_t **link;
+
+			if (!info->dev_attrs)
+				link = &info->dev_attrs;
+			else
+				link = &last->next;
+			attr = uio_get_uevent_attributes(fullname, link);
+			if (!attr)
+				return -1;
+			last = attr;
+			continue;
+		}
+
 		attr = malloc(sizeof(struct uio_dev_attr_t));
 		if (!attr)
 			return -1;
