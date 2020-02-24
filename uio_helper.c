@@ -88,6 +88,7 @@ int line_from_file(char *filename, char *linebuf)
 		if (*s == '\n') *s = 0;
 		s++;
 	}
+	fclose(file);
 	return 0;
 }
 
