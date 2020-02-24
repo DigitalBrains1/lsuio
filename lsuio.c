@@ -199,6 +199,7 @@ static void usage (int status)
 Options:\n\
   -h, --help       display this help and exit\n\
   -m, --mmap       test if mmap() works for all mappings\n\
+  -u, --uiodev N   only probe /dev/uioN\n\
   -v, --verbose    also display device attributes\n\
   -V, --version    output version information and exit\n\
 "));
