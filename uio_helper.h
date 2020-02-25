@@ -3,6 +3,7 @@
    UIO helper functions - header file.
 
    Copyright (C) 2007 Hans J. Koch
+   Copyright (C) 2020 QBayLogic B.V.
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License version 2 as
@@ -26,6 +27,7 @@
 
 #define UIO_INVALID_SIZE	-1
 #define UIO_INVALID_ADDR	(~0)
+#define UIO_INVALID_OFFSET	-1
 
 #define UIO_MMAP_NOT_DONE	0
 #define UIO_MMAP_OK		1
@@ -35,8 +37,10 @@
 #define MAX_UIO_MAPS 	5
 
 struct uio_map_t {
+	char name[ UIO_MAX_NAME_SIZE ];
 	unsigned long addr;
 	int size;
+	int offset;
 	int mmap_result;
 };
 
@@ -58,8 +62,10 @@ struct uio_info_t {
 
 /* function prototypes */
 
+int uio_get_mem_offset(struct uio_info_t* info, int map_num);
 int uio_get_mem_size(struct uio_info_t* info, int map_num);
 int uio_get_mem_addr(struct uio_info_t* info, int map_num);
+int uio_get_mem_name(struct uio_info_t* info, int map_num);
 int uio_get_event_count(struct uio_info_t* info);
 int uio_get_name(struct uio_info_t* info);
 int uio_get_version(struct uio_info_t* info);

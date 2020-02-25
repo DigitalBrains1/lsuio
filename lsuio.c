@@ -106,6 +106,8 @@ static int show_map(struct uio_info_t *info, int map_num)
 	       map_num,
 	       info->maps[map_num].addr,
 	       info->maps[map_num].size);
+	if (info->maps[map_num].offset)
+		printf(", offset=0x%X", info->maps[map_num].offset);
 
 	if (opt_mmap) {
 		printf(", mmap test: ");
@@ -121,6 +123,8 @@ static int show_map(struct uio_info_t *info, int map_num)
 		}
 	}
 	printf("\n");
+	if (info->maps[map_num].name[0])
+		printf("\t\tname=%s\n", info->maps[map_num].name);
 	return 0;
 }
 

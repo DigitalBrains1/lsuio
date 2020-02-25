@@ -32,6 +32,22 @@
 
 #include "uio_helper.h"
 
+int uio_get_mem_offset(struct uio_info_t* info, int map_num)
+{
+	int ret;
+	char filename[64];
+	info->maps[map_num].offset = UIO_INVALID_OFFSET;
+	sprintf(filename, "/sys/class/uio/uio%d/maps/map%d/offset",
+		info->uio_num, map_num);
+	FILE* file = fopen(filename,"r");
+	if (!file) return -1;
+	ret = fscanf(file,"0x%x",
+			(unsigned int *) &info->maps[map_num].offset);
+	fclose(file);
+	if (ret<0) return -2;
+	return 0;
+}
+
 int uio_get_mem_size(struct uio_info_t* info, int map_num)
 {
 	int ret;
@@ -62,20 +78,6 @@ int uio_get_mem_addr(struct uio_info_t* info, int map_num)
 	return 0;
 }
 
-int uio_get_event_count(struct uio_info_t* info)
-{
-	int ret;
-	char filename[64];
-	info->event_count = 0;
-	sprintf(filename, "/sys/class/uio/uio%d/event", info->uio_num);
-	FILE* file = fopen(filename,"r");
-	if (!file) return -1;
-	ret = fscanf(file,"%lu",&info->event_count);
-	fclose(file);
-	if (ret<0) return -2;
-	return 0;
-}
-
 static int line_from_file(char *filename, char *linebuf)
 {
 	char *s;
@@ -90,6 +92,28 @@ static int line_from_file(char *filename, char *linebuf)
 		s++;
 	}
 	fclose(file);
+	return 0;
+}
+
+int uio_get_mem_name(struct uio_info_t* info, int map_num)
+{
+	char filename[64];
+	sprintf(filename, "/sys/class/uio/uio%d/maps/map%d/name",
+			info->uio_num, map_num);
+	return line_from_file(filename, info->maps[map_num].name);
+}
+
+int uio_get_event_count(struct uio_info_t* info)
+{
+	int ret;
+	char filename[64];
+	info->event_count = 0;
+	sprintf(filename, "/sys/class/uio/uio%d/event", info->uio_num);
+	FILE* file = fopen(filename,"r");
+	if (!file) return -1;
+	ret = fscanf(file,"%lu",&info->event_count);
+	fclose(file);
+	if (ret<0) return -2;
 	return 0;
 }
 
@@ -119,6 +143,8 @@ int uio_get_all_info(struct uio_info_t* info)
 	for (i = 0; i < MAX_UIO_MAPS; i++) {
 		uio_get_mem_size(info, i);
 		uio_get_mem_addr(info, i);
+		uio_get_mem_offset(info, i);
+		uio_get_mem_name(info, i);
 	}
 	uio_get_event_count(info);
 	uio_get_name(info);
