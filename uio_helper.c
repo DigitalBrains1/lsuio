@@ -41,7 +41,7 @@ int uio_get_mem_size(struct uio_info_t* info, int map_num)
 		info->uio_num, map_num);
 	FILE* file = fopen(filename,"r");
 	if (!file) return -1;
-	ret = fscanf(file,"0x%lx",&info->maps[map_num].size);
+	ret = fscanf(file,"0x%x",(unsigned int *) &info->maps[map_num].size);
 	fclose(file);
 	if (ret<0) return -2;
 	return 0;
@@ -70,7 +70,7 @@ int uio_get_event_count(struct uio_info_t* info)
 	sprintf(filename, "/sys/class/uio/uio%d/event", info->uio_num);
 	FILE* file = fopen(filename,"r");
 	if (!file) return -1;
-	ret = fscanf(file,"%d",&info->event_count);
+	ret = fscanf(file,"%lu",&info->event_count);
 	fclose(file);
 	if (ret<0) return -2;
 	return 0;

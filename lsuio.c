@@ -92,7 +92,7 @@ static void show_device(struct uio_info_t *info)
 {
 	char dev_name[16];
 	sprintf(dev_name,"uio%d",info->uio_num);
-	printf("%s: name=%s, version=%s, events=%d\n",
+	printf("%s: name=%s, version=%s, events=%ld\n",
 	       dev_name, info->name, info->version, info->event_count);
 }
 
@@ -101,7 +101,7 @@ static int show_map(struct uio_info_t *info, int map_num)
 	if (info->maps[map_num].size <= 0)
 		return -1;
 
-	printf("\tmap[%d]: addr=0x%08X, size=%d",
+	printf("\tmap[%d]: addr=0x%08lX, size=%d",
 	       map_num,
 	       info->maps[map_num].addr,
 	       info->maps[map_num].size);
