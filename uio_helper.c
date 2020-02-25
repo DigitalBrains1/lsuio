@@ -76,7 +76,7 @@ int uio_get_event_count(struct uio_info_t* info)
 	return 0;
 }
 
-int line_from_file(char *filename, char *linebuf)
+static int line_from_file(char *filename, char *linebuf)
 {
 	char *s;
 	int i;
@@ -126,7 +126,7 @@ int uio_get_all_info(struct uio_info_t* info)
 	return 0;
 }
 
-int dev_attr_filter(char *filename)
+static int dev_attr_filter(char *filename)
 {
 	struct stat filestat;
 
@@ -137,7 +137,7 @@ int dev_attr_filter(char *filename)
 	return 0;
 }
 
-struct uio_dev_attr_t *uio_get_uevent_attributes(char *filename,
+static struct uio_dev_attr_t *uio_get_uevent_attributes(char *filename,
 		struct uio_dev_attr_t **link)
 {
 	const char prefix[] = "uevent/";
@@ -277,7 +277,7 @@ void uio_free_info(struct uio_info_t* info)
 	}
 }
 
-int uio_num_from_filename(char* name)
+static int uio_num_from_filename(char* name)
 {
 	enum scan_states { ss_u, ss_i, ss_o, ss_num, ss_err };
 	enum scan_states state = ss_u;
@@ -352,7 +352,7 @@ struct uio_info_t* uio_find_devices(int filter_num)
 	return infolist;
 }
 
-void uio_single_mmap_test(struct uio_info_t* info, int map_num)
+static void uio_single_mmap_test(struct uio_info_t* info, int map_num)
 {
 	info->maps[map_num].mmap_result = UIO_MMAP_NOT_DONE;
 	if (info->maps[map_num].size <= 0)
