@@ -213,8 +213,9 @@ int uio_get_device_attributes(struct uio_info_t* info)
 		return -1;
 
 	while(n--) {
-		sprintf(fullname, "/sys/class/uio/uio%d/device/%s",
-			info->uio_num, namelist[n]->d_name);
+		snprintf(fullname, sizeof(fullname),
+				"/sys/class/uio/uio%d/device/%s",
+				info->uio_num, namelist[n]->d_name);
 		if (!dev_attr_filter(fullname))
 			continue;
 		if (!strcmp(namelist[n]->d_name, "uevent")) {
