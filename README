@@ -1,3 +1,21 @@
+lsuio - List UIO devices.
+
+This is a fork of
+http://www.osadl.org/projects/downloads/UIO/user/lsuio-0.2.0.tar.gz
+
+It contains some bugfixes and some enhanced functionality. It adds:
+
+- Every attribute in a device's uevents sysfs file is exposed as an individual
+  uio_dev_attr_t entry. This is very useful for finding the correct uio
+  device.
+
+- For every memory mapping, also expose its name and offset. With the name, we
+  have a method for distinguishing multiple mappings without relying on a
+  specific order. Offset is a prerequisite for using mappings where the base
+  register is not page-aligned.
+
+The original README of this program follows below.
+
 	lsuio - List UIO devices.
 
 
