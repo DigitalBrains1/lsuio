@@ -3,14 +3,14 @@
   Version 0.3.0
 
   * New output fields:
-	  * Show all KEY=VALUE pairs from the uio device's uevent sysfs file as device
-			attributes (when invoked with the '--verbose' flag). This can help a lot
-			in identifying the right uio device to use.
-	  * For each mapping, show its offset if non-zero, and its name (which might
-		  be the empty string).
-	* Several small fixes
+    * Show all KEY=VALUE pairs from the uio device's uevent sysfs file as device
+      attributes (when invoked with the '--verbose' flag). This can help a lot
+      in identifying the right uio device to use.
+    * For each mapping, show its offset if non-zero, and its name (which might
+      be the empty string).
+  * Several small fixes
 
 2007-01-25  Hans J. Koch  <hjk@linutronix.de>
 
-	* lsuio: initial version.
+  * lsuio: initial version.
 
